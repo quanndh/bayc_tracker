@@ -1,0 +1,63 @@
+version: "3"
+
+services:
+  db:
+    image: postgres:14.1-alpine
+    restart: always
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    ports:
+      - "5433:5432"
+    volumes:
+      - db:/var/lib/postgresql/data
+  redis:
+    image: redis:latest
+    ports:
+      - 6379:6379
+    volumes:
+      - redis:/data
+  api:
+    container_name: bayc_tracker_be
+    build:
+      context: ./be
+      target: development
+    image: bayc_tracker_be
+    depends_on:
+      - db
+      - redis
+    ports:
+      - 3000:3000
+    environment:
+      PORT: 3000
+      NODE_ENV: development
+      DATABASE_HOST: db
+      DB_PORT: 5432
+      DATABASE_USER: postgres
+      DATABASE_PASSWORD: postgres
+      DATABASE_NAME: postgres
+      DATABASE_SYNC: "true"
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      RPC: https://eth-mainnet.g.alchemy.com/v2/aBAovzIe_e9gpWIZqMNG5mzZLWdyPtbq
+      ALCHEMY_KEY: aBAovzIe_e9gpWIZqMNG5mzZLWdyPtbq
+      CMC_KEY: 588c5c86-fb2d-430e-affa-1788379aeb47
+      BLOCK_CONFIRM: 7
+    links:
+      - db
+      - redis
+  # web:
+  #   container_name: bayc_tracker_web
+  #   build:
+  #     context: ./fe
+  #     target: development
+  #   ports:
+  #     - 5173:5173
+  #   environment:
+  #     VITE_API_URL: be:3000
+volumes:
+  db:
+    driver: local
+  redis:
+    driver: local
