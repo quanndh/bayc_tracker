@@ -14,6 +14,7 @@ import {
   LineController,
   BarController,
 } from "chart.js";
+import zoomPlugin from "chartjs-plugin-zoom";
 import { Chart as ChartComponent } from "react-chartjs-2";
 
 ChartJS.register(
@@ -25,32 +26,9 @@ ChartJS.register(
   Legend,
   Tooltip,
   LineController,
-  BarController
+  BarController,
+  zoomPlugin
 );
-
-const options = {
-  responsive: true,
-  interaction: {
-    mode: "index" as const,
-    intersect: false,
-  },
-  stacked: false,
-  scales: {
-    y: {
-      type: "linear" as const,
-      display: true,
-      position: "left" as const,
-    },
-    y1: {
-      type: "linear" as const,
-      display: true,
-      position: "right" as const,
-      grid: {
-        drawOnChartArea: false,
-      },
-    },
-  },
-};
 
 const Chart = () => {
   const [data, setData] = useState<Array<any>>([]);
@@ -58,6 +36,57 @@ const Chart = () => {
   const getChartData = async () => {
     const res = await request.get(`${Env.apiUrl}/api/txs/chart`);
     setData(res.data);
+  };
+
+  const options = {
+    responsive: true,
+    interaction: {
+      mode: "index" as const,
+      intersect: false,
+    },
+    stacked: false,
+    scales: {
+      y: {
+        type: "linear" as const,
+        display: true,
+        position: "left" as const,
+      },
+      y1: {
+        type: "linear" as const,
+        display: true,
+        position: "right" as const,
+        grid: {
+          drawOnChartArea: false,
+        },
+      },
+      x: {
+        min: moment(data[data.length - 30].day).format("DD MMM YY"),
+        max: moment(data[data.length - 1].day).format("DD MMM YY"),
+      },
+    },
+    plugins: {
+      title: {
+        display: true,
+      },
+      legend: {
+        display: true,
+      },
+      zoom: {
+        pan: {
+          enabled: true,
+          mode: "x" as const,
+        },
+        zoom: {
+          pinch: {
+            enabled: true, // Enable pinch zooming
+          },
+          wheel: {
+            enabled: true, // Enable wheel zooming
+          },
+          mode: "x" as const,
+        },
+      },
+    },
   };
 
   useEffect(() => {
@@ -86,7 +115,6 @@ const Chart = () => {
         borderWidth: 2,
         data: labels.map((_, index) => data[index].volume),
         yAxisID: "y",
-        fill: true,
       },
     ];
     return {
