@@ -8,15 +8,7 @@ async function bootstrap() {
       process.env.NODE_ENV === 'development' ? ['error', 'warn', 'debug'] : [],
     cors:
       process.env.NODE_ENV === 'development'
-        ? {
-            origin: [
-              'http://localhost:3000',
-              'http://localhost:3001',
-              'http://localhost',
-              'http://127.0.0.1:5173',
-            ],
-            credentials: true,
-          }
+        ? true
         : {
             origin: [],
             credentials: true,

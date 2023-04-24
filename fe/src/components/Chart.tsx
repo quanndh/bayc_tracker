@@ -70,15 +70,6 @@ const Chart = () => {
     );
     const datasets = [
       {
-        type: "bar" as const,
-        label: "Volume (ETH)",
-        borderColor: "rgb(255, 99, 132)",
-        borderWidth: 2,
-        data: labels.map((_, index) => data[index].volume),
-        yAxisID: "y",
-        fill: true,
-      },
-      {
         type: "line" as const,
         label: "Average Price (ETH)",
         backgroundColor: "rgb(75, 192, 192)",
@@ -86,6 +77,16 @@ const Chart = () => {
         borderColor: "white",
         borderWidth: 2,
         yAxisID: "y1",
+        borderJoinStyle: "bevel" as const,
+      },
+      {
+        type: "bar" as const,
+        label: "Volume (ETH)",
+        borderColor: "rgb(255, 99, 132)",
+        borderWidth: 2,
+        data: labels.map((_, index) => data[index].volume),
+        yAxisID: "y",
+        fill: true,
       },
     ];
     return {
